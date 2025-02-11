@@ -30,6 +30,10 @@ Row
 ----------------------------------------
 ### Summary
 
+This dashboard visualizes the study findings from the paper:  
+
+Wu, G., Min, Y., Deshmukh, R., Cartwright, P., DeCesaro, J., Kerstan, D., Somasundaram, D., Strecker, H., and Fargione, J. **"Predicting Future Siting of Utility-Scale Solar and Wind Projects in the United States: Key Variables, Regional Trends, and Equity in Disadvantaged Communities."**
+
 We identified key differences in variables influencing utility-scale solar and land-based wind project development locations, offering significant insights for energy policy and future planning. While proximity to transmission lines and existing projects are critical for both technologies, solar development is more closely tied to population density, road accessibility, Renewable Portfolio Standards (RPS), and environmental impacts. Conversely, wind project locations are primarily driven by resource availability. These findings suggest that human activities exert a greater influence on solar project locations, as evidenced by their proximity to densely populated areas. Policymakers should incorporate these factors into energy infrastructure planning, ensuring that renewable energy projects align with both technological and community needs. Special attention should be paid to balancing development with potential impacts on human and environmental landscapes.
 
 We utilized four machine learning models, revealing that Random Forest and XGBoost outperform GLM and Lasso in predicting existing project locations. While these models exhibit high accuracy, their tendency to overfit current patterns may limit their utility for forecasting future development in unexplored areas. Considering our objective of identifying plausible locations for future projects, GLM and Lasso models provide valuable insights for policymakers, as their broader inclusivity better accommodates planning scenarios beyond the scope of existing projects.
