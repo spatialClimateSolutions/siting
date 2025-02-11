@@ -1,0 +1,572 @@
+---
+title: Utility-scale solar and wind project siting in the U.S.
+output: 
+  flexdashboard::flex_dashboard:
+    # logo: ./data/intermediate_files/energy_logo_dashboard.png
+    orientation: rows
+    vertical_layout: scroll
+    fig_width: 7
+    fig_height: 5   
+    fig_mobile: !expr c(5.5,3.5)
+    
+---
+
+```{r setup, include=FALSE}
+
+source("./energysiting-main/yohan/dash.R")
+
+```
+
+
+
+Overview
+========================================
+Row {data-height=45}
+----------------------------------------
+**Predicting Future Siting of Utility-Scale Solar and Wind Projects: Key Variables, Regional Trends, and Equity in Disadvantaged Communities**
+
+
+Row
+----------------------------------------
+### Summary
+
+We identified key differences in variables influencing utility-scale solar and land-based wind project development locations, offering significant insights for energy policy and future planning. While proximity to transmission lines and existing projects are critical for both technologies, solar development is more closely tied to population density, road accessibility, Renewable Portfolio Standards (RPS), and environmental impacts. Conversely, wind project locations are primarily driven by resource availability. These findings suggest that human activities exert a greater influence on solar project locations, as evidenced by their proximity to densely populated areas. Policymakers should incorporate these factors into energy infrastructure planning, ensuring that renewable energy projects align with both technological and community needs. Special attention should be paid to balancing development with potential impacts on human and environmental landscapes.
+
+We utilized four machine learning models, revealing that Random Forest and XGBoost outperform GLM and Lasso in predicting existing project locations. While these models exhibit high accuracy, their tendency to overfit current patterns may limit their utility for forecasting future development in unexplored areas. Considering our objective of identifying plausible locations for future projects, GLM and Lasso models provide valuable insights for policymakers, as their broader inclusivity better accommodates planning scenarios beyond the scope of existing projects.
+
+Regional differences further underscore the importance of localized policy approaches. For solar, the South is heavily influenced by population density and transmission line proximity, while the Northeast is more sensitive to environmental impacts. For wind, Texas exhibits high sensitivity to resource availability, whereas proximity to existing projects is a more significant factor in the Northeast. Interestingly, while transmission line proximity is consistently important for both solar and wind across regions, the South displays higher sensitivity to transmission lines for solar and the Midwest for wind projects. These regional variations highlight the need for tailored policies that consider both the technological and geographical nuances of renewable energy development.
+
+Our predictive models highlight notable regional and demographic disparities in the siting of utility-scale solar and land-based wind projects, revealing critical insights for policy interventions. Texas shows the highest probabilities for both solar and wind project locations, while the West and Mountain West exhibit lower probabilities for solar, and the West and South show lower probabilities for wind. Furthermore, solar and wind projects are more frequently located in non-disadvantaged communities (non-DAC), with disparities between DAC and non-DAC being most pronounced in the Northeast for solar and the Midwest for wind. 
+
+These findings underscore the potential inequities in renewable energy development and highlight a pressing need for targeted policies to address these disparities. Disadvantaged communities are often excluded from the benefits of renewable energy projects, such as job creation, energy access, and environmental improvements. Simultaneously, concerns like "Not In My Back Yard" (NIMBY) opposition and potential property value declines near wind farms (e.g., [cite]) further complicate the siting process. Regardless of whether the perceived impacts are beneficial or harmful, policymakers must prioritize reducing disparities to ensure equitable energy transitions.
+
+Efforts to reduce disparities in renewable energy siting should include targeted mechanisms such as grants, tax incentives, or community ownership models to ensure that disadvantaged communities directly benefit from these projects. Under the Inflation Reduction Act (IRA), energy communities—defined by criteria such as the presence of brownfields, closed coal-powered plants and coal mines, or historical dependence on coal, oil, or natural gas industries, and higher unemployment rates—are eligible for a 10-percentage-point increase in tax credits for accommodating renewable energy projects (cite). This provision exemplifies how policy can be leveraged to address inequities while promoting clean energy adoption. Regions with significant disparities, such as the Northeast for solar and the Midwest for wind, warrant particular attention to ensure renewable energy projects foster inclusive and equitable energy transitions. By focusing resources on these areas, policymakers can enhance community-level participation, distribute economic benefits more broadly, and advance environmental justice.
+
+By integrating these findings into energy planning and policy frameworks, decision-makers can promote the equitable deployment of renewable energy infrastructure, advance national decarbonization goals, and ensure that the transition to clean energy benefits all communities, including those historically marginalized or underserved.
+
+
+Variables
+========================================
+Row {data-height=45}
+----------------------------------------
+**Original Variables**
+
+Row {.tabset data-height=800}
+----------------------------------------
+### Env Impact
+```{r, fig.asp=0.6, out.width = "35%"}
+display("processed_data/variables/env_impactScore_solar.tif")
+display("processed_data/variables/env_impactScore_wind.tif")
+```
+```{r}
+
+```
+
+
+**Environmental Impact Scores**  
+This environmental sensitivity scoring dataset was created by The Nature Conservancy examining the environmental constraints and impacts of renewable energy development. Spatial data representing ecological, cultural and agricultural siting criteria was used in the compiling of this dataset from the Power of Place - National study. 
+
+The original dataset is available for download [here](https://zenodo.org/records/7878144#.ZFmRJ-xKjc8). 
+
+
+### Land Acquisition
+```{r, fig.asp=0.6}
+display("processed_data/variables/land_acquisition.tif")
+```
+```{r}
+
+```
+
+
+**Land Acquisition**  
+This dataset was created by the PLACES Lab at Boston University. High-resolution maps of estimated fair market value of private properties for the actual cost of publicly-funded land acquisitions for conservation in the contiguous United States (Nolte, 2020). 
+
+The original dataset is available for download [here](https://datadryad.org/stash/dataset/doi:10.5061/dryad.np5hqbzq9). 
+ 
+
+
+### Pop Density
+```{r, fig.asp=0.6}
+pop <- rast("./data/processed_data/variables/pop_density.tif")
+pop <- raster::aggregate(pop, 70)
+terra::plot(pop, axes=FALSE, legend = TRUE)
+```
+```{r}
+```
+
+
+**Population Density**  
+ORNL’s LandScan is a community standard for global population distribution data. The LandScan Global population distribution is essentially a combination of locally adaptive models that are tailored to match the data conditions and geographical nature of each individual country and region (Rose et al., 2020).
+
+To access the original data, you can follow this [link](https://landscan.ornl.gov/downloads/2019). 
+
+
+### Roads
+```{r, fig.asp=0.6}
+display("processed_data/variables/roads_qgis.tif")
+```
+```{r}
+
+```
+
+
+**Distance to Roads**  
+Euclidian distance to roads, calculated in meters.  
+The original roads dataset was compiled using data from Open Street Map but accessed through a PostgreSQL database.
+
+
+### RPS
+```{r, fig.asp=0.6}
+display("processed_data/variables/rps.tif")
+```
+```{r}
+```
+
+
+**Renewable Portfolio Standards**  
+Renewable Portfolio Standards (RPS) require that a specified percentage of the electricity utilities sell comes from renewable resources. States have created these standards to diversify their energy resources, promote domestic energy production and encourage economic development. This dataset contains information of the renewable portfolio standards for each state based on their 2025 goal. For states that did not have a 2025 goal, we chose the nearest target to this.  
+
+
+### Slope
+```{r, fig.asp=0.6}
+display("processed_data/variables/slope.tif")
+```
+```{r}
+```
+
+
+**Slope**  
+This dataset was created by the United States Geological survey and information on its creation can be found [here](https://www.usgs.gov/centers/eros/science/usgs-eros-archive-digital-elevation-shuttle-radar-topography-mission-srtm-1?qt-science_center_objects=0#qt-science_center_objects). The dataset used in our analysis was the SRTM Void Filled data which has additional processing done to address areas of missing data in the slope. 
+
+The data can be accessed through the USGS's [Earth Explorer](http://earthexplorer.usgs.gov/). 
+ 
+
+### Capacity
+```{r, fig.asp=0.6, out.width = "35%"}
+display("processed_data/variables/solar_capacity.tif")
+display("processed_data/variables/wind_capacity.tif")
+
+```
+
+
+**Solar and Wind Capacity Factor**  
+Capacity Factor is defined as a measure of how much energy is produced by a plant compared with its maximum output (National Renewable Energy Laboratory, 2013). 
+
+
+### Transmission Lines
+```{r, fig.asp=0.6}
+display("processed_data/variables/transmission_110_qgis.tif")
+```
+```{r}
+
+```
+
+
+**Distance to Transmission Lines**  
+Distance to the nearest transmission line calculated in meters.  
+This dataset was obtained from the Homeland Infrastructure Foundation Level Database (HIFLD) (https://gii.dhs.gov/HIFLD) as well as the Energy modelling and simulation community. It contains information on electric power transmission lines throughout the US. Transmission Lines are the system of structures, wires, insulators and associated hardware that carry electric energy from one point to another in an electric power system. Underground transmission lines are included where sources were available.
+
+The original dataset can be accessed [here](https://hifld-geoplatform.opendata.arcgis.com/datasets/geoplatform::electric-power-transmission-lines/about).
+
+
+
+### Substations
+```{r, fig.asp=0.6}
+display("processed_data/variables/substations_110_qgis.tif")
+```
+```{r}
+
+```
+
+
+**Distance to Electrical Substations**  
+Euclidian distance to substations, calculated in meters.  
+This feature class/shapefile is for the [Homeland Infrastructure Foundation Level Database (HIFLD)](https://gii.dhs.gov/HIFLD) as well as the Energy modelling and simulation community. This shapefile represents electric power substations primarily associated with electric power transmission. In this layer, substations are considered facilities and equipment that switch, transform, or regulate electric power at voltages equal to, or greater than, 69 kilovolts. The Substations feature class/shapefile includes taps, a location where power on a transmission line is tapped by another transmission line (Homeland Infrastructure Foundation-Level Data, 2022).
+
+The original dataset can be accessed [here](https://hifld-geoplatform.opendata.arcgis.com/datasets/geoplatform::electric-substations/about). 
+
+
+### SVI
+```{r, fig.asp=0.6, out.width = "30%"}
+display("processed_data/variables/svi_unemp.tif")
+display("processed_data/variables/svi_minrty.tif")
+display("processed_data/variables/svi_pov.tif")
+```
+```{r}
+```
+
+
+**Social Vulnerability Index (Unemployment, Minority, and Poverty)**  
+The dataset used for population demographics for the US was the Agency for Toxic Substances and Disease Registry at the Center for Disease Control's Social Vulnerability. The CDC/ATSDR SVI is a database that helps emergency response planners and public health officials identify, map, and plan support for communities that will most likely need support before, during, and after a public health emergency. The tool is commonly used across CDC/ATSDR, in addition to many emergency preparedness and response organizations. More information about this dataset can be found [here](https://www.atsdr.cdc.gov/placeandhealth/svi/at-a-glance_svi.html).
+
+The original dataset can be accessed [here](https://www.atsdr.cdc.gov/placeandhealth/svi/data_documentation_download.html). 
+
+
+### Regions
+```{r, fig.asp=0.6}
+load(file = "./energysiting-main/yohan/data/region.RData") #rgn
+plot(rgn, main = "")
+```
+```{r}
+
+```
+
+**Contiguous U.S. Regions**  
+The contiguous U.S. regions were categorized as West, Mountain West, Midwest, Texas, South, and Northeast. 
+
+### Land Types
+```{r, fig.asp=0.6}
+
+plot(rast("./data/processed_data/variables/lulc.tif"), axes=FALSE)
+```
+```{r}
+```
+
+**Land Types**  
+Land use and land cover type: agricultural, forested, grassland, developed, shrubland, riparian, others (LANDFIRE 2016). 
+
+The original dataset can be accessed [here](https://landfire.gov/version_download.php#). 
+
+### Spatial Lags
+```{r, fig.asp=0.6, out.width = "35%"}
+
+plot(rast("./data/processed_data/variables/solar_lag.tif"), axes=FALSE)
+plot(rast("./data/processed_data/variables/wind_lag.tif"), axes=FALSE)
+```
+```{r}
+```
+
+**Spatial Lags**  
+Spatial lag layerss were developed using kernel density estimation (KDE) based on the locations of existing projects to include in the list of predictors, addressing issues of spatial autocorrelation or nonstationarity (U.S. Large-Scale Solar Photovoltaic Database (USPVDB) and United States Wind Turbine Database (USWTDB)). 
+
+The original dataset can be accessed [solar](https://eerscmap.usgs.gov/uspvdb/) and [wind](https://energy.usgs.gov/uswtdb/). 
+
+
+Row {data-height=30}
+----------------------------------------
+Row {data-height=30}
+----------------------------------------
+**Standardized Variables**
+
+Row {.tabset data-height=600}
+----------------------------------------
+### Common Variables
+![](./energysiting-main/yohan/fig/var_cov.png){width=1500}  
+
+### Technology-Specific Variables
+![](./energysiting-main/yohan/fig/var_tech.png){width=1500}  
+
+### Indicator Variables
+![](./energysiting-main/yohan/fig/var_dum.png){width=1500}  
+
+Locations
+========================================
+Row {data-height=45}
+----------------------------------------
+**Project Locations**
+
+
+
+Row {.tabset data-height=550}
+----------------------------------------
+### Solar
+```{r, fig.asp=0.6}
+load("./energysiting-main/yohan/data/location.RData") # solar_mask, solar_mask_rast, solar_location_rast, solar_locations, wind_mask, wind_mask_rast, wind_location_rast, wind_hull
+
+solar_mask %>% 
+  st_buffer(2000) %>% 
+  ggplot() +
+  geom_sf(data = aoi, fill = "gray30", color = "gray0") + # US border
+  geom_sf(fill = "yellow", color = NA, size = 0.5) +
+  theme_minimal() +
+  labs(title = "", color = "") +
+  coord_sf(crs = st_crs(2163), xlim = c(-2500000, 2500000), 
+           ylim = c(-2300000,730000), expand = FALSE, datum = NA) +
+  theme(legend.position = "right")
+
+```
+```{r}
+```
+
+
+
+**Existing solar farm locations**  
+This dataset was compiled to by Kruitwagen et. al. to accompany a the paper titled, "A global inventory of solar photovoltaic generating units." 
+
+It can be accessed [here](https://zenodo.org/record/5005868#.YeJOvi-B1Go).
+
+
+
+<!-- ### Solar Interactive -->
+<!-- ```{r, fig.asp=0.6} -->
+<!-- solar_mask %>%  -->
+<!--   st_crop(aoi) %>%  -->
+<!--   mapview(legend = F) -->
+
+<!-- ``` -->
+
+
+### Solar Mask
+```{r, fig.asp=0.6}
+load("./energysiting-main/yohan/data/absence.RData") # s_ab_sf, w_ab_sf, solar_absence_roi, wind_absence_roi
+plot(rast(solar_absence_roi), axes=FALSE, legend = F)
+plot(aoi, col = NA, add = T)
+```
+```{r}
+```
+
+**Site Suitability level: SL1**  
+Places where absence points can potentially be located
+
+
+
+### Solar Absence
+```{r, fig.asp=0.6}
+s_ab_sf %>% 
+  st_buffer(dist = 2000) %>% 
+  ggplot() +
+  geom_sf(data = aoi, fill = "gray90", color = "gray0") + # US border
+  geom_sf(aes(fill = factor(iteration)), color = "NA", size = 0.001) +
+  theme_minimal() +
+  scale_fill_manual(values = brewer.pal(n = 10, name = "Paired")) +
+  # scale_fill_viridis_b(option = "B", n.breaks = 10, direction = -1) +
+  labs(title = "", fill = "Iteration") +
+  coord_sf(crs = 2163, xlim = c(-2500000, 2500000), 
+           ylim = c(-2300000,730000), expand = FALSE, datum = NA) +
+  theme(legend.position = "right")
+
+
+```
+```{r}
+```
+
+
+
+**Pseudo absence points**  
+These are points generated in order to conduct the machine learning analysis
+
+
+Row {.tabset data-height=550}
+----------------------------------------
+### Wind
+```{r, fig.asp=0.6}
+wind_mask %>% 
+  ggplot() +
+  geom_sf(data = aoi, fill = "gray30", color = "gray0") + # US border
+  geom_sf(fill = "yellow", color = NA, size = 0.5) +
+  theme_minimal() +
+  labs(title = "", color = "") +
+  coord_sf(crs = st_crs(2163), xlim = c(-2500000, 2500000), 
+           ylim = c(-2300000,730000), expand = FALSE, datum = NA) +
+  theme(legend.position = "right")
+
+
+```
+```{r}
+```
+
+
+**Existing wind farm locations**  
+The United States Wind Turbine Database (USWTDB) provides the locations of land-based and offshore wind turbines in the United States, corresponding wind project information, and turbine technical specifications.  
+
+The data is available for download [here](https://www.sciencebase.gov/catalog/item/6001e327d34e592d8671fae0).
+
+
+
+<!-- ### Wind Interactive -->
+<!-- ```{r, fig.asp=0.6} -->
+<!-- wind_mask %>%  -->
+<!--   st_crop(aoi) %>%  -->
+<!--     mapview(legend = F) -->
+
+<!-- ``` -->
+
+
+### Wind Mask
+```{r, fig.asp=0.6}
+plot(rast(wind_absence_roi), axes=FALSE, legend = F)
+plot(aoi, col = NA, add = T)
+```
+```{r}
+```
+
+
+
+**Site Suitability level: SL1**  
+Places where absence points can potentially be located
+
+
+### Wind Absence
+```{r, fig.asp=0.6}
+w_ab_sf %>% 
+  ggplot() +
+  geom_sf(data = aoi, fill = "gray90", color = "gray0") + # US border
+  geom_sf(aes(fill = factor(iteration)), color = "NA", size = 0.001) +
+  theme_minimal() +
+  scale_fill_manual(values = brewer.pal(n = 10, name = "Paired")) +
+  labs(title = "", fill = "Iteration") +
+  coord_sf(crs = 2163, xlim = c(-2500000, 2500000), 
+           ylim = c(-2300000,730000), expand = FALSE, datum = NA) +
+  theme(legend.position = "right")
+```
+```{r}
+
+```
+
+
+
+**Pseudo absence points**  
+These are points generated in order to conduct the machine learning analysis
+
+
+
+
+Solar Analysis
+========================================
+Row {data-height=45}
+----------------------------------------
+**Solar Analysis**
+
+
+Row
+----------------------------------------
+### Model Results
+
+![](./energysiting-main/yohan/fig/s_reg.png){width=1000}  
+
+Row 
+----------------------------------------
+### Variable Importance
+
+![](./energysiting-main/yohan/fig/imp_s.png){width=1000} 
+
+
+Row 
+----------------------------------------
+### Model Performance from 10 fold Cross Validation
+
+![](./energysiting-main/yohan/fig/performance_s.png){width=800} 
+
+
+
+Row {data-height=500}
+----------------------------------------
+### Regional Trends 
+
+![](./energysiting-main/yohan/fig/slope_s.png){width=1000} 
+
+
+
+Solar Prediction
+========================================
+Row {data-height=45}
+----------------------------------------
+**Solar Predictions**
+
+Row {data-height=500}
+----------------------------------------
+### Predictions
+![](./energysiting-main/yohan/fig/prediction_s.png){width=1000} 
+
+Row {data-height=30}
+----------------------------------------
+**Interactive Map**
+
+
+Row {data-height=600}
+----------------------------------------
+### Interactive Prediction Map (Logistic Regression)
+```{r, fig.asp=0.6}
+display_mapview_quality("analysis/predictionSurfaces/pred_logReg_s.tif", layer_name = "Solar")
+
+```
+
+
+
+Wind Analysis
+========================================
+Row {data-height=45}
+----------------------------------------
+**Wind Analysis**
+
+Row
+----------------------------------------
+### Model Results
+
+![](./energysiting-main/yohan/fig/w_reg.png){width=1000}  
+
+
+Row 
+----------------------------------------
+### Variable Importance
+
+![](./energysiting-main/yohan/fig/imp_w.png){width=1000} 
+
+
+Row 
+----------------------------------------
+### Model Performance from 10 fold Cross Validation
+
+![](./energysiting-main/yohan/fig/performance_w.png){width=800} 
+
+
+Row {data-height=500}
+----------------------------------------
+### Regional Trends 
+
+![](./energysiting-main/yohan/fig/slope_w.png){width=1000} 
+
+
+
+Wind Prediction
+========================================
+Row {data-height=45}
+----------------------------------------
+**Wind Predictions**
+
+Row {.tabset data-height=500}
+----------------------------------------
+### Predictions
+![](./energysiting-main/yohan/fig/prediction_w.png){width=1000} 
+
+Row {data-height=30}
+----------------------------------------
+**Interactive Map**
+
+Row {data-height=600}
+----------------------------------------
+
+### Interactive Prediction Map (Logistic Regression)
+```{r, fig.asp=0.6}
+display_mapview_quality("analysis/predictionSurfaces/pred_logReg_w.tif", layer_name = "Wind")
+
+```
+
+
+
+Disadvantaged Communities
+========================================
+Row {data-height=45}
+----------------------------------------
+**Disadvantaged Communities (DAC)**
+
+Row {.tabset data-height=800}
+----------------------------------------
+### DAC
+![](./energysiting-main/yohan/fig/dac.png){width=800} 
+```{r}
+```
+
+**Disadvantaged Communities**  
+Tract-level identification of disadvantaged communities (DAC) were identified using the Climate and Economic Justice Screening Tool (CEJST) developed by the White House U.S. Council on Environmental Quality.
+
+
+### Solar
+![](./energysiting-main/yohan/fig/dac_s.png){width=600} 
+
+### Wind
+![](./energysiting-main/yohan/fig/dac_w.png){width=600} 
+
+
+### Regions
+![](./energysiting-main/yohan/fig/dac_com.png){width=800} 
