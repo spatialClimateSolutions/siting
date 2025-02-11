@@ -14,5 +14,5 @@ Efforts to reduce disparities in renewable energy siting should include targeted
 
 By integrating these findings into energy planning and policy frameworks, decision-makers can promote the equitable deployment of renewable energy infrastructure, advance national decarbonization goals, and ensure that the transition to clean energy benefits all communities, including those historically marginalized or underserved.
 
-
+This dashboard visualizes the study findings from the paper: Wu, G., Min, Y., Deshmukh, R., Cartwright, P., DeCesaro, J., Kerstan, D., Somasundaram, D., Strecker, H., and Fargione, J. **"Predicting Future Siting of Utility-Scale Solar and Wind Projects in the United States: Key Variables, Regional Trends, and Equity in Disadvantaged Communities."**
 
