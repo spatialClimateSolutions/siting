@@ -1,5 +1,5 @@
 ---
-title: Utility-scale solar and wind project siting in the U.S.
+title: Factors shaping the siting of utility-scale solar and wind projects in the United States
 output: 
   flexdashboard::flex_dashboard:
     # logo: ./data/intermediate_files/energy_logo_dashboard.png
@@ -13,7 +13,7 @@ output:
 
 ```{r setup, include=FALSE}
 
-source("./energysiting-main/yohan/dash.R")
+source("dash.R")
 
 ```
 
@@ -23,7 +23,6 @@ Overview
 ========================================
 Row {data-height=45}
 ----------------------------------------
-**Predicting Future Siting of Utility-Scale Solar and Wind Projects: Key Variables, Regional Trends, and Equity in Disadvantaged Communities**
 
 
 Row
@@ -32,21 +31,10 @@ Row
 
 This dashboard visualizes the study findings from the paper:  
 
-Wu, G., Min, Y., Deshmukh, R., Cartwright, P., DeCesaro, J., Kerstan, D., Somasundaram, D., Strecker, H., and Fargione, J. **"Predicting Future Siting of Utility-Scale Solar and Wind Projects in the United States: Key Variables, Regional Trends, and Equity in Disadvantaged Communities."**
+Grace C. Wu, Yohan Min, Ranjit Deshmukh, Paloma Cartwright, Joseph Decesaro, Daniel Kerstan, Gnanadesikan Somasundaram, and Henry Strecker.  
+**["Factors shaping the siting of utility-scale solar and wind projects in the United States"](https://iopscience.iop.org/article/10.1088/1748-9326/ae5faa/meta)**.
 
-We identified key differences in variables influencing utility-scale solar and land-based wind project development locations, offering significant insights for energy policy and future planning. While proximity to transmission lines and existing projects are critical for both technologies, solar development is more closely tied to population density, road accessibility, Renewable Portfolio Standards (RPS), and environmental impacts. Conversely, wind project locations are primarily driven by resource availability. These findings suggest that human activities exert a greater influence on solar project locations, as evidenced by their proximity to densely populated areas. Policymakers should incorporate these factors into energy infrastructure planning, ensuring that renewable energy projects align with both technological and community needs. Special attention should be paid to balancing development with potential impacts on human and environmental landscapes.
-
-We utilized four machine learning models, revealing that Random Forest and XGBoost outperform GLM and Lasso in predicting existing project locations. While these models exhibit high accuracy, their tendency to overfit current patterns may limit their utility for forecasting future development in unexplored areas. Considering our objective of identifying plausible locations for future projects, GLM and Lasso models provide valuable insights for policymakers, as their broader inclusivity better accommodates planning scenarios beyond the scope of existing projects.
-
-Regional differences further underscore the importance of localized policy approaches. For solar, the South is heavily influenced by population density and transmission line proximity, while the Northeast is more sensitive to environmental impacts. For wind, Texas exhibits high sensitivity to resource availability, whereas proximity to existing projects is a more significant factor in the Northeast. Interestingly, while transmission line proximity is consistently important for both solar and wind across regions, the South displays higher sensitivity to transmission lines for solar and the Midwest for wind projects. These regional variations highlight the need for tailored policies that consider both the technological and geographical nuances of renewable energy development.
-
-Our predictive models highlight notable regional and demographic disparities in the siting of utility-scale solar and land-based wind projects, revealing critical insights for policy interventions. Texas shows the highest probabilities for both solar and wind project locations, while the West and Mountain West exhibit lower probabilities for solar, and the West and South show lower probabilities for wind. Furthermore, solar and wind projects are more frequently located in non-disadvantaged communities (non-DAC), with disparities between DAC and non-DAC being most pronounced in the Northeast for solar and the Midwest for wind. 
-
-These findings underscore the potential inequities in renewable energy development and highlight a pressing need for targeted policies to address these disparities. Disadvantaged communities are often excluded from the benefits of renewable energy projects, such as job creation, energy access, and environmental improvements. Simultaneously, concerns like "Not In My Back Yard" (NIMBY) opposition and potential property value declines near wind farms (e.g., [cite]) further complicate the siting process. Regardless of whether the perceived impacts are beneficial or harmful, policymakers must prioritize reducing disparities to ensure equitable energy transitions.
-
-Efforts to reduce disparities in renewable energy siting should include targeted mechanisms such as grants, tax incentives, or community ownership models to ensure that disadvantaged communities directly benefit from these projects. Under the Inflation Reduction Act (IRA), energy communities—defined by criteria such as the presence of brownfields, closed coal-powered plants and coal mines, or historical dependence on coal, oil, or natural gas industries, and higher unemployment rates—are eligible for a 10-percentage-point increase in tax credits for accommodating renewable energy projects (cite). This provision exemplifies how policy can be leveraged to address inequities while promoting clean energy adoption. Regions with significant disparities, such as the Northeast for solar and the Midwest for wind, warrant particular attention to ensure renewable energy projects foster inclusive and equitable energy transitions. By focusing resources on these areas, policymakers can enhance community-level participation, distribute economic benefits more broadly, and advance environmental justice.
-
-By integrating these findings into energy planning and policy frameworks, decision-makers can promote the equitable deployment of renewable energy infrastructure, advance national decarbonization goals, and ensure that the transition to clean energy benefits all communities, including those historically marginalized or underserved.
+The location of a wind or solar project is one of the most consequential decisions a renewable energy developer can make when planning a new project, as it shapes numerous aspects of project economics and local impacts on ecosystems and host communities. This study examines key factors influencing the siting of utility-scale solar and wind projects in the contiguous United States using multiple statistical and machine learning models and a robust sampling approach. We find that while proximity to transmission lines and existing projects is critical for both technologies, solar locations are more flexible and are shaped by a greater diversity of factors including higher population density, greater road accessibility, and lower ecological impact. In contrast, wind locations are primarily driven by wind resource quality and agricultural land use. There are notable regional nuances in these national trends, with some variables like population density having greater effects in the South than in the West or Northeast. While individual models emphasize different predictors and regional patterns, the ensemble reveals consistent tendencies that increase confidence in interpretation. Lastly, the probabilities of wind and solar being sited in disadvantaged (DAC) and non-DAC areas vary significantly across regions, suggesting that the Midwest and Northeast in particular may see disproportionately less solar and wind development in disadvantaged community census tracts.
 
 
 Variables
@@ -91,7 +79,7 @@ The original dataset is available for download [here](https://datadryad.org/stas
 
 ### Pop Density
 ```{r, fig.asp=0.6}
-pop <- rast("./data/processed_data/variables/pop_density.tif")
+pop <- rast("../data/processed_data/variables/pop_density.tif")
 pop <- raster::aggregate(pop, 70)
 terra::plot(pop, axes=FALSE, legend = TRUE)
 ```
@@ -208,7 +196,7 @@ The original dataset can be accessed [here](https://www.atsdr.cdc.gov/placeandhe
 
 ### Regions
 ```{r, fig.asp=0.6}
-load(file = "./energysiting-main/yohan/data/region.RData") #rgn
+load(file = "../energySiting_analysis/derived/region.RData") #rgn
 plot(rgn, main = "")
 ```
 ```{r}
@@ -221,7 +209,7 @@ The contiguous U.S. regions were categorized as West, Mountain West, Midwest, Te
 ### Land Types
 ```{r, fig.asp=0.6}
 
-plot(rast("./data/processed_data/variables/lulc.tif"), axes=FALSE)
+plot(rast("../data/processed_data/variables/lulc.tif"), axes=FALSE)
 ```
 ```{r}
 ```
@@ -234,8 +222,8 @@ The original dataset can be accessed [here](https://landfire.gov/version_downloa
 ### Spatial Lags
 ```{r, fig.asp=0.6, out.width = "35%"}
 
-plot(rast("./data/processed_data/variables/solar_lag.tif"), axes=FALSE)
-plot(rast("./data/processed_data/variables/wind_lag.tif"), axes=FALSE)
+plot(rast("../data/processed_data/variables/solar_lag.tif"), axes=FALSE)
+plot(rast("../data/processed_data/variables/wind_lag.tif"), axes=FALSE)
 ```
 ```{r}
 ```
@@ -255,12 +243,59 @@ Row {data-height=30}
 Row {.tabset data-height=600}
 ----------------------------------------
 ### Common Variables
+```{r, fig.asp=0.6, out.width = "70%"}
+
+common <- stack("../energySiting_analysis/derived/covStack.tif")
+
+plot(stack(common[[1:10]]), 
+     axes = FALSE,           # Remove axes
+     box = FALSE,            # Remove the outline borders
+     main = cov.names[c(1:10)],  # Optional: Use layer names as titles
+     cex.main = 1, 
+     nc = 4                  # Adjust the number of columns in the plot layout
+)
+
+```
+```{r}
+```
+
+
 ![](./energysiting-main/yohan/fig/var_cov.png){width=1500}  
 
 ### Technology-Specific Variables
+```{r, fig.asp=0.6, out.width = "60%"}
+
+solar <- stack("../energySiting_analysis/derived/solar_covStack.tif")
+wind <- stack("../energySiting_analysis/derived/wind_covStack.tif")
+future <- stack("../energySiting_analysis/derived/future.tif")
+
+plot(stack(c(solar, wind, future)), 
+     axes = FALSE,           # Remove axes
+     box = FALSE,            # Remove the outline borders
+     main = sw.names,  # Optional: Use layer names as titles
+     cex.main = 1, 
+     nc = 3                 # Adjust the number of columns in the plot layout
+)
+
+```
+```{r}
+```
 ![](./energysiting-main/yohan/fig/var_tech.png){width=1500}  
 
 ### Indicator Variables
+```{r, fig.asp=0.6, out.width = "70%"}
+
+plot(stack(common[[11:24]]), 
+     axes = FALSE,           # Remove axes
+     box = FALSE,            # Remove the outline borders
+     main = cov.names[c(11:24)],  # Optional: Use layer names as titles
+     cex.main = 1, 
+     nc = 4                  # Adjust the number of columns in the plot layout
+)
+
+```
+```{r}
+```
 ![](./energysiting-main/yohan/fig/var_dum.png){width=1500}  
 
 Locations
@@ -275,9 +310,9 @@ Row {.tabset data-height=550}
 ----------------------------------------
 ### Solar
 ```{r, fig.asp=0.6}
-load("./energysiting-main/yohan/data/location.RData") # solar_mask, solar_mask_rast, solar_location_rast, solar_locations, wind_mask, wind_mask_rast, wind_location_rast, wind_hull
+load("../energySiting_analysis/derived/location.RData") # solar_mask, solar_mask_rast, solar_location_rast, solar_locations, wind_mask, wind_mask_rast, wind_location_rast, wind_hull
 
-solar_mask %>% 
+solar_locations %>% 
   st_buffer(2000) %>% 
   ggplot() +
   geom_sf(data = aoi, fill = "gray30", color = "gray0") + # US border
@@ -312,8 +347,10 @@ It can be accessed [here](https://eerscmap.usgs.gov/uspvdb/).
 
 ### Solar Mask
 ```{r, fig.asp=0.6}
-load("./energysiting-main/yohan/data/absence.RData") # s_ab_sf, w_ab_sf, solar_absence_roi, wind_absence_roi
-plot(rast(solar_absence_roi), axes=FALSE, legend = F)
+load("../energySiting_analysis/derived/absence.RData") # s_ab_sf, w_ab_sf, solar_absence_roi, wind_absence_roi
+s_roi <- rast("../energySiting_analysis/derived/solar_absence_roi.tif") 
+w_roi <- rast("../energySiting_analysis/derived/wind_absence_roi.tif")
+plot(s_roi, axes=FALSE, legend = F)
 plot(aoi, col = NA, add = T)
 ```
 ```{r}
@@ -354,7 +391,7 @@ Row {.tabset data-height=550}
 ----------------------------------------
 ### Wind
 ```{r, fig.asp=0.6}
-wind_mask %>% 
+wind_locations %>% 
   ggplot() +
   geom_sf(data = aoi, fill = "gray30", color = "gray0") + # US border
   geom_sf(fill = "yellow", color = NA, size = 0.5) +
@@ -388,7 +425,7 @@ The data is available for download [here](https://energy.usgs.gov/uswtdb/).
 
 ### Wind Mask
 ```{r, fig.asp=0.6}
-plot(rast(wind_absence_roi), axes=FALSE, legend = F)
+plot(w_roi, axes=FALSE, legend = F)
 plot(aoi, col = NA, add = T)
 ```
 ```{r}
@@ -436,26 +473,43 @@ Row
 ----------------------------------------
 ### Model Results
 
+```{r, fig.asp=0.6, out.width = "100%"}
+
+ggarrange(s_reg1, s_reg2)
+
+```
+
 ![](./energysiting-main/yohan/fig/s_reg.png){width=1000}  
 
 Row 
 ----------------------------------------
 ### Variable Importance
 
+```{r, fig.asp=0.7}
+
+importance_s
+
+```
+
 ![](./energysiting-main/yohan/fig/imp_s.png){width=1000} 
 
 
-Row 
-----------------------------------------
-### Model Performance from 10 fold Cross Validation
+<!-- Row  -->
+<!-- ---------------------------------------- -->
+<!-- ### Model Performance from 10 fold Cross Validation -->
 
-![](./energysiting-main/yohan/fig/performance_s.png){width=800} 
+<!-- ![](./energysiting-main/yohan/fig/performance_s.png){width=800}  -->
 
 
 
-Row {data-height=500}
+Row {data-height=600}
 ----------------------------------------
 ### Regional Trends 
+```{r, fig.asp=0.6}
+
+ggarrange(s_f41, s_f4, nrow = 2)
+
+```
 
 ![](./energysiting-main/yohan/fig/slope_s.png){width=1000} 
 
@@ -470,6 +524,13 @@ Row {data-height=45}
 Row {data-height=500}
 ----------------------------------------
 ### Predictions
+```{r, fig.asp=0.6, out.width = "35%"}
+
+f4a
+
+```
+
+
 ![](./energysiting-main/yohan/fig/prediction_s.png){width=1000} 
 
 Row {data-height=30}
@@ -481,7 +542,7 @@ Row {data-height=600}
 ----------------------------------------
 ### Interactive Prediction Map (Logistic Regression)
 ```{r, fig.asp=0.6}
-display_mapview_quality("analysis/predictionSurfaces/pred_logReg_s.tif", layer_name = "Solar")
+display_mapview_quality("../energySiting_analysis/derived/pred_logReg_s.tif", layer_name = "Solar")
 
 ```
 
@@ -496,6 +557,11 @@ Row {data-height=45}
 Row
 ----------------------------------------
 ### Model Results
+```{r, fig.asp=0.6}
+
+ggarrange(w_reg1, w_reg2)
+
+```
 
 ![](./energysiting-main/yohan/fig/w_reg.png){width=1000}  
 
@@ -504,19 +570,30 @@ Row
 ----------------------------------------
 ### Variable Importance
 
+```{r, fig.asp=0.7}
+
+importance_w
+
+```
+
 ![](./energysiting-main/yohan/fig/imp_w.png){width=1000} 
 
 
-Row 
-----------------------------------------
-### Model Performance from 10 fold Cross Validation
+<!-- Row  -->
+<!-- ---------------------------------------- -->
+<!-- ### Model Performance from 10 fold Cross Validation -->
 
-![](./energysiting-main/yohan/fig/performance_w.png){width=800} 
+<!-- ![](./energysiting-main/yohan/fig/performance_w.png){width=800}  -->
 
 
-Row {data-height=500}
+Row {data-height=600}
 ----------------------------------------
 ### Regional Trends 
+```{r, fig.asp=0.6}
+
+ggarrange(w_f41, w_f4, nrow = 2)
+
+```
 
 ![](./energysiting-main/yohan/fig/slope_w.png){width=1000} 
 
@@ -531,6 +608,12 @@ Row {data-height=45}
 Row {.tabset data-height=500}
 ----------------------------------------
 ### Predictions
+```{r, fig.asp=0.6, out.width = "35%"}
+
+f4b
+
+```
+
 ![](./energysiting-main/yohan/fig/prediction_w.png){width=1000} 
 
 Row {data-height=30}
@@ -542,7 +625,7 @@ Row {data-height=600}
 
 ### Interactive Prediction Map (Logistic Regression)
 ```{r, fig.asp=0.6}
-display_mapview_quality("analysis/predictionSurfaces/pred_logReg_w.tif", layer_name = "Wind")
+display_mapview_quality("../energySiting_analysis/derived/pred_logReg_w.tif", layer_name = "Wind")
 
 ```
 
@@ -554,23 +637,45 @@ Row {data-height=45}
 ----------------------------------------
 **Disadvantaged Communities (DAC)**
 
-Row {.tabset data-height=800}
+Row {.tabset data-height=500}
 ----------------------------------------
 ### DAC
-![](./energysiting-main/yohan/fig/dac.png){width=800} 
+```{r, fig.asp=0.6, out.width = "50%"}
+
+dac %>% 
+  ggplot() +
+  geom_sf(aes(fill = disadvantaged)) +
+  labs(title = "", fill = "") +
+  coord_sf(crs = st_crs(2163), xlim = c(-2500000, 2500000), 
+           ylim = c(-2300000,730000), expand = FALSE, datum = NA) +
+  theme(legend.position = "right",
+        plot.title = element_text(hjust = 0.5))
+  
+
+
+```
 ```{r}
 ```
+
 
 **Disadvantaged Communities**  
 Tract-level identification of disadvantaged communities (DAC) were identified using the Climate and Economic Justice Screening Tool (CEJST) developed by the White House U.S. Council on Environmental Quality.
 
 
-### Solar
-![](./energysiting-main/yohan/fig/dac_s.png){width=600} 
+### Solar/Wind
+```{r, fig.asp=0.6, out.width = "35%"}
 
-### Wind
-![](./energysiting-main/yohan/fig/dac_w.png){width=600} 
+f5a
+
+```
 
 
 ### Regions
+
+```{r, fig.asp=0.7}
+
+f5b
+
+```
+
 ![](./energysiting-main/yohan/fig/dac_com.png){width=800} 
