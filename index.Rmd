@@ -240,7 +240,7 @@ Row {data-height=30}
 ----------------------------------------
 **Standardized Variables**
 
-Row {.tabset data-height=600}
+Row {.tabset data-height=800}
 ----------------------------------------
 ### Common Variables
 ```{r, fig.asp=0.6, out.width = "70%"}
@@ -637,10 +637,10 @@ Row {data-height=45}
 ----------------------------------------
 **Disadvantaged Communities (DAC)**
 
-Row {.tabset data-height=500}
+Row {.tabset data-height=700}
 ----------------------------------------
 ### DAC
-```{r, fig.asp=0.6, out.width = "50%"}
+```{r, fig.asp=0.6, out.width = "40%"}
 
 dac %>% 
   ggplot() +
